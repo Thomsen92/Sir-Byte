@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sir Byte · Character lab</title><link rel="icon" href="data:,"><link rel="stylesheet" href="style.css"><script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script></head>
+<body>
+<header><a class="brand" href="./"><span class="brand-icon">B<span>·</span></span><span>Sir Byte <small>CHARACTER LAB</small></span></a><span class="build"><i></i> Interaktiver 3D-Prototyp</span></header>
+<main>
+ <section class="studio" aria-label="Sir Byte 3D-Vorschau">
+  <div class="intro"><p class="eyebrow">YOUR ENGLISH GENTLEBOT</p><h1>A little wit.<br>A lot of <em>Byte.</em></h1><p>Ein Gentleman. Zwei Augen.<br>Eine ganze Menge Persönlichkeit.</p></div>
+  <div id="viewport"><div id="loading">Sir Byte macht sich bereit …</div><div id="error" role="alert" hidden></div></div>
+  <div class="speech" aria-live="polite"><span class="speech-label">SIR BYTE</span><span id="speech">Ready when you are.</span></div>
+  <div class="stage-footer"><span><span class="live-dot"></span><span id="state-label">Ganz Ohr.</span></span><button id="size" aria-pressed="false">↙ Kleine Ansicht</button><button id="reset-camera">↺ Ansicht</button></div>
+ </section>
+ <aside>
+  <div class="panel-heading"><span class="eyebrow">MEET YOUR TUTOR</span><h2>Quite the character.</h2><p>Teste seinen Blick, seine Gesten und seinen etwas zu guten Geschmack.</p></div>
+  <section class="controls"><h3>Eine kleine Kostprobe</h3><div class="reaction-grid">
+   <button class="reaction" data-state="cheeky"><span class="eye-icon">◒ ◕</span><span>Frech<small>Er weiß es natürlich besser.</small></span></button>
+   <button class="reaction" data-state="celebrate"><span class="eye-icon">⌒ ⌒</span><span>Begeistert<small>Das war ausgezeichnet.</small></span></button>
+   <button class="reaction" data-state="think"><span class="eye-icon">– ◒</span><span>Nachdenklich<small>Die Zahnräder arbeiten.</small></span></button>
+   <button class="reaction" data-state="support"><span class="eye-icon">◕ ◕</span><span>Ermutigend<small>Du bekommst das hin.</small></span></button>
+   <button class="reaction" data-state="surprise"><span class="eye-icon">● ●</span><span>Überrascht<small>Oh. Rather impressive.</small></span></button>
+   <button class="reaction active" data-state="idle"><span class="eye-icon">⬮ ⬮</span><span>Ganz ruhig<small>Er wartet auf dich.</small></span></button>
+  </div></section>
+  <section class="recording"><div><h3>Sir Bytes Stimme</h3><p id="recording-status" role="status">Deine ElevenLabs-Aufnahme</p></div><button id="replay-voice">▶ Sir Byte sprechen lassen</button><audio id="recorded-voice" preload="metadata" src="audio/sir-byte-splendid.mp3"></audio></section>
+  <section class="quiz"><div class="quiz-top"><h3>Im Spiel ausprobieren</h3><span>QUICK CHECK</span></div><p>Yesterday, I <strong>___</strong> to school.</p><div class="answers"><button data-answer="false">go</button><button data-answer="true">went</button><button data-answer="false">gone</button></div><p id="quiz-feedback" aria-live="polite">Ein Fehler? Frech. Noch einer? Verständnisvoll.</p></section>
+  <section class="gaze"><h3>Seine Aufmerksamkeit lenken</h3><div class="segmented"><button data-look="player" class="selected" aria-pressed="true">Zu dir</button><button data-look="task" aria-pressed="false">Zur Aufgabe</button><button data-look="pointer" aria-pressed="false">Zum Zeiger</button></div></section>
+  <div class="options"><label><input type="checkbox" id="voice"> <span>Weitere Ausrufe vorlesen <small>Systemstimme des Geräts</small></span></label><label><input type="checkbox" id="motion"> <span>Weniger Bewegung</span></label></div>
+  <div class="download"><button id="export">↓ 3D-Modell (.glb)</button><span id="export-note">Augen und Verhalten werden durch JavaScript gesteuert.</span></div>
+ </aside>
+</main>
+<footer><span>SIR BYTE / EXPRESSION STUDY</span><span>Drag zum Drehen · Scroll zum Zoomen · Touch bereit</span></footer>
+<script type="module" src="main.mjs"></script>
+</body></html>
