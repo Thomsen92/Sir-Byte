@@ -1,1 +1,1 @@
-{"name":"sir-byte-demo","private":true,"type":"module","scripts":{"start":"node server.mjs","build":"node build.mjs","test":"node --test behavior.test.mjs hat-contact.test.mjs speech-motion.test.mjs"},"dependencies":{"three":"^0.180.0"}}
+{"name":"sir-byte-demo","private":true,"type":"module","scripts":{"start":"node server.mjs","build":"node build.mjs","test":"node --test behavior.test.mjs hat-contact.test.mjs speech-motion.test.mjs cane-motion.test.mjs"},"dependencies":{"three":"^0.180.0"}}

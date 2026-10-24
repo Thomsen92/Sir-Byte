@@ -17,11 +17,13 @@ In diesem Ordner `npm start` ausführen und http://localhost:4173 öffnen. Node.
 ## Ausprobieren
 
 - Sechs Reaktionen, fließende Augenformen, unabhängiges Blinzeln, Blickrichtung und Kopf-/Flossengesten.
+- Seltene Idle-Geste mit frei schwebendem schwarzem Gehstock und goldenem Knauf: nach neun ruhigen Sekunden mit Lichtring aufploppen, in einem Bogen aufsteigen, zwei Überschläge und eine kleine Verbeugung machen, dann verschwinden. Weitere Auftritte nach 18–30 ruhigen Sekunden. „✧ Gehstock-Zauber“ startet die Geste direkt; `byte.playCane()` fordert sie auch über die Factory an. Sprache und Reaktionen unterbrechen sie; „Weniger Bewegung“ schaltet sie aus. Der Stock schwebt unabhängig neben der dirigierenden Flosse und gehört nur zur Live-Figur, nicht zum neutralen GLB-Export.
+- Bei „Begeistert“ (auch bei einer richtigen Quizantwort) erscheint der schwebende Stock sofort, steigt neben den Kopf und hält 1,5 Sekunden eine Siegespose mit steil nach oben gerichtetem Goldknauf. Anschließend dreht er sich zweimal und verschwindet mit einem Plopp. Der Gehstock ist insgesamt um 15 % vergrößert. Diese Geste begleitet die Stimme und läuft nach deren Ende zu Ende; andere Reaktionen und „Weniger Bewegung“ unterbrechen sie. Der Stock neigt sich leicht zur Kamera, die Integrationen als `viewerPosition` an `byte.update()` übergeben können.
 - Quiz: erster Fehler frech, weitere Fehler unterstützend, richtige Antwort setzt Fehlerzähler zurück.
 - Spieler/Aufgabe/Zeiger als Blickziel; Groß-/Kleinansicht; Drehen und Zoomen.
 - Acht ElevenLabs-Aufnahmen liegen unter `audio/`: `ready.mp3`, `nearly.mp3`, `splendid.mp3`, `thinking.mp3`, `support.mp3`, `surprised.mp3`, `oh-dear.mp3` und `broken-clock.mp3`. Die Zuordnung steht in `voice-clips.mjs`. Jeder Reaktionsbutton spielt seinen Ausruf ab. „Trocken“ und „Bissiges Lob“ sind manuell wählbare Zusatzreaktionen. Quizantworten wählen weiterhin automatisch den passenden freundlichen Ausruf: erster Fehler frech, weitere Fehler unterstützend, richtige Antwort begeistert. „Noch einmal abspielen“ startet den zuletzt gewählten Ausruf erneut von vorn. Vor der ersten Auswahl ist das „Ready when you are.“. Andere Reaktionen unterbrechen laufendes Audio; es gibt keine überlappenden Stimmen und keinen automatischen Ton beim Seitenaufruf.
 - Beim Sprechen: weiche Begrüßung, Blickkontakt, kleine erklärende Flossengesten, asymmetrischer wissender Blick und ruhiger Abschluss. `speech-motion.mjs` enthält eine vorläufige, zeitlich komponierte Bewegung, keine Wort-/Phonemerkennung. Ein Web-Audio-Analyser misst die lokale Aufnahme und setzt kleine Lautstärkeakzente; ohne Web Audio bleibt die zeitgesteuerte Bewegung erhalten. Audiozeit steuert den Ablauf, auch bei Wiederholung. „Weniger Bewegung“ unterdrückt die Körpergesten weiterhin.
-- „Ton bei Reaktionen“ schaltet die automatische Wiedergabe bei Buttons und Quiz ein oder aus. Der explizite Wiederholungsbutton spielt weiterhin auf Wunsch ab. Alle Stimmen stammen aus den bereitgestellten Dateien; keine Systemstimme und kein ElevenLabs-API-Aufruf zur Laufzeit.
+- „Ton bei Reaktionen & Effekten“ schaltet automatische Stimmen und den kurzen Gehstock-Plopp ein oder aus. Der Plopp wird lokal mit Web Audio synthetisiert und erst nach einer Nutzerinteraktion freigeschaltet. Der explizite Wiederholungsbutton spielt weiterhin auf Wunsch ab. Alle Stimmen stammen aus den bereitgestellten Dateien; keine Systemstimme und kein ElevenLabs-API-Aufruf zur Laufzeit.
 - „Weniger Bewegung“ reduziert Körperbewegungen; Augen und Blinzeln bleiben aktiv. Systempräferenz wird übernommen.
 
 ## Später integrieren
@@ -34,19 +36,31 @@ scene.add(byte.root);
 byte.behavior.lookAt(0.7, 0.2); // normalisierte Richtung, Werte -1 bis 1
 byte.behavior.react('think');
 byte.behavior.feedback(false); // erste falsche Antwort: cheeky, danach support
+byte.pointAtTask('top-front-right'); // in 3D schräg nach vorn, rechts und oben zeigen
+// Oder direkt eine Weltposition anvisieren (auch unter transformierten Eltern):
+const taskPosition = taskObject.getWorldPosition(new THREE.Vector3());
+byte.pointAtTask(taskPosition);
+byte.behavior.react('idle'); // Zeigepose beenden
 
 // In deinem Renderloop, dt in Sekunden:
 byte.update(dt, {reducedMotion: false});
 // Während einer Aufnahme optional zusätzlich:
 // {speaking: true, speechTime: audio.currentTime,
 //  speechDuration: audio.duration, speechLevel: rmsLevelBetweenZeroAndOne}
+// Zeigeposen sind unabhängig von der Kamera. +Z ist vor der Figur, +X rechts, +Y oben.
 ```
 
 `sir-byte.mjs` baut Modell, Materialien und Display-Shader. `behavior.mjs` enthält die von three.js unabhängige Zustandslogik. `main.mjs` ist ausschließlich Demo, Kamera, Beleuchtung, UI, Stimme und Export. three.js und die Addons müssen auf dieselbe Version auflösen; in Bundlern funktioniert dies mit dem Paket `three`.
 
+`pointAtTask(directionOrWorldPosition)` hält die stille Zeigepose unbegrenzt: schwebender Gehstock, ein zugekniffenes Auge und Blick zur Aufgabe. Arm und Stock zeigen auf derselben Achse; das untere Stockende schwebt mit kleinem, konstantem Abstand direkt vor der Flossenspitze als Verlängerung des Arms. Die Pose bleibt auch bei „Weniger Bewegung“ sichtbar; kein Drehen, Wippen oder automatisches Verschwinden. Jede andere Reaktion beendet sie.
+
+Die 15 als `TASK_DIRECTIONS` exportierten Posen decken den Raum vor der Figur ab: `left`, `front-left`, `front`, `front-right`, `right` (seitlich ±90°, diagonal ±45°, geradeaus 0°), zusätzlich dieselben fünf mit `top-` oder `bottom-` davor. Alle Richtungen sind im lokalen Koordinatensystem der Figur definiert und drehen sich mit ihr. Die Kamera beeinflusst das Ziel nicht. Die Demo bietet alle 15 Posen in drei Höhenreihen.
+
+Für Aufgaben im 360°-Spiel vorzugsweise `pointAtTask({x,y,z})` bzw. einen `THREE.Vector3` mit der **Weltposition** verwenden. Das Ziel wird kopiert. Bei Bewegung der Figur wird die Richtung weiterhin von der aktuellen Schulterposition zum festen Weltziel berechnet, einschließlich Position, Drehung und gleichmäßiger Skalierung übergeordneter Objekte. Bewegt sich die Aufgabe selbst, ihre aktualisierte Weltposition erneut an `pointAtTask()` übergeben. Mit `byte.behavior.react('idle')` beenden.
+
 ## Modell und Export
 
-`sir-byte.glb` enthält ein neutrales, in Teilen editierbares Modell mit statischen emissiven Augen, rund 16.100 Dreiecken und rund 0,75 MB. Die Augen im Browser sind ein eigener Shader und nicht als glTF-Material portabel. Die Laufzeitbewegungen sind prozedural, keine eingebetteten Skelett- oder Gesichtsclips. Für die animierte Figur die JS-Factory verwenden; die GLB allein enthält das Verhalten nicht.
+`sir-byte.glb` enthält ein neutrales, in Teilen editierbares Modell mit statischen emissiven Augen und rund 1,05 MB. Die Fliege hat fein unterteilte, zum Knoten hin geraffte Schleifen mit dezenten Falten und einem seidigen Bordeaux-Material. Die Live-Figur umfasst einschließlich Gehstock rund 26.900 Dreiecke. Die Augen im Browser sind ein eigener Shader und nicht als glTF-Material portabel. Die Laufzeitbewegungen sind prozedural, keine eingebetteten Skelett- oder Gesichtsclips. Für die animierte Figur die JS-Factory verwenden; die GLB allein enthält das Verhalten nicht.
 
 Export reproduzieren und Reimport prüfen: `node export-model.mjs`. Verhaltenstests: `npm test`.
 

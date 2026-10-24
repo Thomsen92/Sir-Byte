@@ -20,11 +20,18 @@
    <button class="reaction active" data-state="idle"><span class="eye-icon">⬮ ⬮</span><span>Ganz ruhig<small>Er wartet auf dich.</small></span></button>
    <button class="reaction" data-state="dry"><span class="eye-icon">◒ –</span><span>Trocken<small>Oh dear, old bean.</small></span></button>
    <button class="reaction" data-state="smug"><span class="eye-icon">◒ ◕</span><span>Bissiges Lob<small>Even a broken clock …</small></span></button>
-  </div></section>
+  </div><button id="cane-preview">✧ Gehstock-Zauber</button></section>
+  <section class="task-pointing"><h3>Auf eine Aufgabe im Raum zeigen</h3><p>Richtungen aus Sicht der Figur. Drehe die Ansicht, um die 3D-Pose von allen Seiten zu prüfen.</p><h4>Oben</h4><div class="point-grid">
+   <button data-point="top-left" aria-label="Oben links" aria-pressed="false">Links</button><button data-point="top-front-left" aria-label="Oben vorn links" aria-pressed="false">Vorn links</button><button data-point="top-front" aria-label="Oben vorn" aria-pressed="false">Vorn</button><button data-point="top-front-right" aria-label="Oben vorn rechts" aria-pressed="false">Vorn rechts</button><button data-point="top-right" aria-label="Oben rechts" aria-pressed="false">Rechts</button>
+  </div><h4>Geradeaus</h4><div class="point-grid">
+   <button data-point="left" aria-label="Seitlich links" aria-pressed="false">Links</button><button data-point="front-left" aria-label="Vorn links" aria-pressed="false">Vorn links</button><button data-point="front" aria-label="Vorn" aria-pressed="false">Vorn</button><button data-point="front-right" aria-label="Vorn rechts" aria-pressed="false">Vorn rechts</button><button data-point="right" aria-label="Seitlich rechts" aria-pressed="false">Rechts</button>
+  </div><h4>Unten</h4><div class="point-grid">
+   <button data-point="bottom-left" aria-label="Unten links" aria-pressed="false">Links</button><button data-point="bottom-front-left" aria-label="Unten vorn links" aria-pressed="false">Vorn links</button><button data-point="bottom-front" aria-label="Unten vorn" aria-pressed="false">Vorn</button><button data-point="bottom-front-right" aria-label="Unten vorn rechts" aria-pressed="false">Vorn rechts</button><button data-point="bottom-right" aria-label="Unten rechts" aria-pressed="false">Rechts</button>
+  </div><button id="stop-pointing">Zeigen beenden</button></section>
   <section class="recording"><div><h3>Sir Bytes Stimme</h3><p id="recording-status" role="status">Acht Ausrufe · Wähle eine Reaktion</p></div><button id="replay-voice">▶ Sir Byte sprechen lassen</button><audio id="recorded-voice" preload="metadata" src="audio/ready.mp3"></audio></section>
   <section class="quiz"><div class="quiz-top"><h3>Im Spiel ausprobieren</h3><span>QUICK CHECK</span></div><p>Yesterday, I <strong>___</strong> to school.</p><div class="answers"><button data-answer="false">go</button><button data-answer="true">went</button><button data-answer="false">gone</button></div><p id="quiz-feedback" aria-live="polite">Ein Fehler? Frech. Noch einer? Verständnisvoll.</p></section>
   <section class="gaze"><h3>Seine Aufmerksamkeit lenken</h3><div class="segmented"><button data-look="player" class="selected" aria-pressed="true">Zu dir</button><button data-look="task" aria-pressed="false">Zur Aufgabe</button><button data-look="pointer" aria-pressed="false">Zum Zeiger</button></div></section>
-  <div class="options"><label><input type="checkbox" id="voice" checked> <span>Ton bei Reaktionen <small>ElevenLabs-Aufnahmen</small></span></label><label><input type="checkbox" id="motion"> <span>Weniger Bewegung</span></label></div>
+  <div class="options"><label><input type="checkbox" id="voice" checked> <span>Ton bei Reaktionen &amp; Effekten <small>Stimme und Gehstock-Plopp</small></span></label><label><input type="checkbox" id="motion"> <span>Weniger Bewegung</span></label></div>
   <div class="download"><button id="export">↓ 3D-Modell (.glb)</button><span id="export-note">Augen und Verhalten werden durch JavaScript gesteuert.</span></div>
  </aside>
 </main>
