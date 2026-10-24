@@ -116,7 +116,7 @@ export function createSirByte(){
   arms.forEach((arm,i)=>{
    const s=i===0?-1:1;let angle=s*.09;
    if(behavior.state==='celebrate')angle=s*(1.5+joy*.18);
-   if(behavior.state==='cheeky'&&i===1)angle=1.12;
+   if(['cheeky','dry','smug'].includes(behavior.state)&&i===1)angle=behavior.state==='dry'?.6:1.12;
    if(behavior.state==='think'&&i===0)angle=-1.85;
    if(behavior.state==='support')angle=s*.6;
    if(behavior.state==='surprise')angle=s*.9;

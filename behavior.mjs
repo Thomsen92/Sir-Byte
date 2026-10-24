@@ -4,7 +4,9 @@ export const EXPRESSIONS = {
   celebrate: { label:'Splendid!', line:'Splendid! Nicely done.', duration:3.6, eyes:[0,0,0.85,0.85], tilt:0.09, lift:0.16 },
   think: { label:'Einen Moment …', line:'Hmm. Let me think.', duration:4.5, eyes:[0.3,0.3,0,0], tilt:0.15, lift:-0.02 },
   support: { label:'Wir schaffen das.', line:"Take your time. You've got this.", duration:5, eyes:[0.05,0.05,0.2,0.2], tilt:-0.09, lift:-0.04 },
-  surprise: { label:'Oh! Rather impressive.', line:'Oh! Rather impressive.', duration:2.8, eyes:[0,0,0,0], tilt:-0.04, lift:0.12 }
+  surprise: { label:'Oh! Rather impressive.', line:'Oh! Rather impressive.', duration:2.8, eyes:[0,0,0,0], tilt:-0.04, lift:0.12 },
+  dry: { label:'Oh dear, old bean.', line:'Oh dear. Not even close, old bean. Do try again.', duration:7, eyes:[0.58,0.32,0,0], tilt:-0.08, lift:-0.02 },
+  smug: { label:'Well, well.', line:'Well, well. Even a broken clock is right twice a day. Congratulations.', duration:9, eyes:[0.6,0.12,0.12,0.05], tilt:0.11, lift:0.035 }
 };
 export class ByteBehavior {
   constructor() { this.state='idle'; this.elapsed=0; this.mistakes=0; this.gaze={x:0,y:0}; }
