@@ -9,7 +9,7 @@ export function sampleSpeech(time,duration,energy){
  const length=Number.isFinite(duration)&&duration>0?duration:14.16;
  const level=Number.isFinite(energy)?clamp(energy):0;
  const progress=clamp(t/length),p=progress*14.16;
- const weight=smooth(t/.4)*smooth((length-t)/.75);
+ const weight=smooth(t/Math.min(.4,length*.16))*smooth((length-t)/Math.min(.75,length*.22));
  const greeting=pulse(p,.8,.7),explain=pulse(p,4.4,1.3),knowing=pulse(p,8,1.1),finish=pulse(p,12.7,.9);
  return {
   weight,

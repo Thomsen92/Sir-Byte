@@ -19,10 +19,10 @@
    <button class="reaction" data-state="surprise"><span class="eye-icon">● ●</span><span>Überrascht<small>Oh. Rather impressive.</small></span></button>
    <button class="reaction active" data-state="idle"><span class="eye-icon">⬮ ⬮</span><span>Ganz ruhig<small>Er wartet auf dich.</small></span></button>
   </div></section>
-  <section class="recording"><div><h3>Sir Bytes Stimme</h3><p id="recording-status" role="status">Deine ElevenLabs-Aufnahme</p></div><button id="replay-voice">▶ Sir Byte sprechen lassen</button><audio id="recorded-voice" preload="metadata" src="audio/sir-byte-splendid.mp3"></audio></section>
+  <section class="recording"><div><h3>Sir Bytes Stimme</h3><p id="recording-status" role="status">Sechs Ausrufe · Wähle eine Reaktion</p></div><button id="replay-voice">▶ Sir Byte sprechen lassen</button><audio id="recorded-voice" preload="metadata" src="audio/ready.mp3"></audio></section>
   <section class="quiz"><div class="quiz-top"><h3>Im Spiel ausprobieren</h3><span>QUICK CHECK</span></div><p>Yesterday, I <strong>___</strong> to school.</p><div class="answers"><button data-answer="false">go</button><button data-answer="true">went</button><button data-answer="false">gone</button></div><p id="quiz-feedback" aria-live="polite">Ein Fehler? Frech. Noch einer? Verständnisvoll.</p></section>
   <section class="gaze"><h3>Seine Aufmerksamkeit lenken</h3><div class="segmented"><button data-look="player" class="selected" aria-pressed="true">Zu dir</button><button data-look="task" aria-pressed="false">Zur Aufgabe</button><button data-look="pointer" aria-pressed="false">Zum Zeiger</button></div></section>
-  <div class="options"><label><input type="checkbox" id="voice"> <span>Weitere Ausrufe vorlesen <small>Systemstimme des Geräts</small></span></label><label><input type="checkbox" id="motion"> <span>Weniger Bewegung</span></label></div>
+  <div class="options"><label><input type="checkbox" id="voice" checked> <span>Ton bei Reaktionen <small>ElevenLabs-Aufnahmen</small></span></label><label><input type="checkbox" id="motion"> <span>Weniger Bewegung</span></label></div>
   <div class="download"><button id="export">↓ 3D-Modell (.glb)</button><span id="export-note">Augen und Verhalten werden durch JavaScript gesteuert.</span></div>
  </aside>
 </main>

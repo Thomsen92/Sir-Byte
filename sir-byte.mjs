@@ -99,7 +99,7 @@ export function createSirByte(){
   const sw=speechPose.weight;
   if(time>nextBlink&&(!speaking||speechLevel<.12)){blinkStart=time;nextBlink=time+3.5+Math.random()*2.8;}
   const bt=time-blinkStart;uniforms.blink.value=bt<.19?Math.sin(Math.PI*bt/.19)**2:0;
-  targetLids.fromArray(e.eyes);targetLids.lerp(new THREE.Vector4(speechPose.upperLeft,speechPose.upperRight,speechPose.smile,speechPose.smile),sw);smoothLids.lerp(targetLids,k);uniforms.lids.value.copy(smoothLids);
+  targetLids.fromArray(e.eyes);targetLids.lerp(new THREE.Vector4(speechPose.upperLeft,speechPose.upperRight,speechPose.smile,speechPose.smile),sw*.55);smoothLids.lerp(targetLids,k);uniforms.lids.value.copy(smoothLids);
   eyes.scale.setScalar(THREE.MathUtils.lerp(1,speechPose.eyeScale,sw));
   let gx=behavior.gaze.x,gy=behavior.gaze.y;
   if(behavior.state==='think'){gx=-.65;gy=.65;}

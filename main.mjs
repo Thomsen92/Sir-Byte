@@ -4,6 +4,7 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
 import {createSirByte} from './sir-byte.mjs';
 import {EXPRESSIONS} from './behavior.mjs';
+import {VOICE_CLIPS} from './voice-clips.mjs';
 
 const viewport=document.querySelector('#viewport');
 function showError(message){document.querySelector('#loading').hidden=true;const el=document.querySelector('#error');el.hidden=false;el.textContent=message;}
@@ -28,11 +29,10 @@ async function boot(){
  resetCamera();
  function resize(){const {width,height}=viewport.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.zoom=Math.min(window.innerWidth<=720?.78:1,width/height/.82);camera.updateProjectionMatrix();}
  new ResizeObserver(resize).observe(viewport);resize();
- function speak(text){if(!document.querySelector('#voice').checked||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-GB';utterance.rate=.96;const voice=speechSynthesis.getVoices().find(v=>v.lang==='en-GB');if(voice)utterance.voice=voice;speechSynthesis.speak(utterance);}catch(error){document.querySelector('#export-note').textContent='Sprachausgabe auf diesem Gerät nicht verfügbar.';}}
- if(!('speechSynthesis' in window)){document.querySelector('#voice').disabled=true;}
  const recording=document.querySelector('#recorded-voice');
  const replayButton=document.querySelector('#replay-voice');
  const recordingStatus=document.querySelector('#recording-status');
+ let currentVoiceState='idle',playRequest=0;
  let audioContext,analyser,audioSamples,audioInit,voiceEnergy=0;
  async function enableAudioAnalysis(){
   if(analyser||audioInit)return;
@@ -47,21 +47,26 @@ async function boot(){
    audioSamples=new Float32Array(analyser.fftSize);
   }catch(error){audioInit=false;recordingStatus.textContent='Sprechbewegung aktiv; Audiomessung auf diesem Gerät nicht verfügbar.';}
  }
- function stopRecording(){if(!recording.paused){recording.pause();recordingStatus.textContent='Aufnahme angehalten. Erneut abspielen?';}}
- async function playRecording(){
+ function stopRecording(){playRequest++;if(!recording.paused){recording.pause();recordingStatus.textContent='Aufnahme angehalten. Erneut abspielen?';}}
+ async function playRecording(state=currentVoiceState){
+  const request=++playRequest;
+  currentVoiceState=state;
   void enableAudioAnalysis();
   if('speechSynthesis' in window)speechSynthesis.cancel();
-  recording.pause();recording.currentTime=0;
-  byte.behavior.react('idle');
-  try{await recording.play();replayButton.textContent='↻ Noch einmal abspielen';recordingStatus.textContent='Sir Byte spricht …';}
-  catch(error){recordingStatus.textContent='Audio konnte nicht starten. Bitte erneut auf Abspielen tippen.';byte.behavior.react('idle');}
+  recording.pause();
+  if(recording.getAttribute('src')!==VOICE_CLIPS[state])recording.src=VOICE_CLIPS[state];
+  recording.currentTime=0;voiceEnergy=0;
+  byte.behavior.react(state);
+  try{await recording.play();if(request!==playRequest)return;replayButton.textContent='↻ Noch einmal abspielen';recordingStatus.textContent=EXPRESSIONS[state].line;}
+  catch(error){if(request!==playRequest)return;recordingStatus.textContent='Audio konnte nicht starten. Bitte erneut auf Abspielen tippen.';byte.behavior.react('idle');}
  }
- replayButton.addEventListener('click',playRecording);
- recording.addEventListener('ended',()=>{recordingStatus.textContent='Noch einmal? Mit Vergnügen.';if(byte.behavior.state==='celebrate')byte.behavior.react('idle');});
+ replayButton.addEventListener('click',()=>void playRecording());
+ recording.addEventListener('ended',()=>{recordingStatus.textContent='Noch einmal? Mit Vergnügen.';byte.behavior.react('idle');});
  recording.addEventListener('error',()=>{recordingStatus.textContent='Aufnahme konnte nicht geladen werden. Bitte Seite neu laden.';});
- function react(state){stopRecording();if(state==='celebrate'){void playRecording();return;}const e=byte.behavior.react(state);speak(e.line);}
+ function react(state){stopRecording();currentVoiceState=state;byte.behavior.react(state);if(document.querySelector('#voice').checked)void playRecording(state);}
+ document.querySelector('#voice').addEventListener('change',event=>{if(!event.target.checked){stopRecording();byte.behavior.react('idle');}});
  document.querySelectorAll('[data-state]').forEach(button=>button.addEventListener('click',()=>react(button.dataset.state)));
- document.querySelectorAll('[data-answer]').forEach(button=>button.addEventListener('click',()=>{stopRecording();const correct=button.dataset.answer==='true';const e=byte.behavior.feedback(correct);if(correct)void playRecording();else speak(e.line);document.querySelector('#quiz-feedback').textContent=correct?'Richtig: „went“ ist die Vergangenheitsform von „go“.':byte.behavior.mistakes===1?'Fast! „Yesterday“ verrät dir die Zeitform.':'Kein Stress: Die Vergangenheit von „go“ lautet „went“.';}));
+ document.querySelectorAll('[data-answer]').forEach(button=>button.addEventListener('click',()=>{stopRecording();const correct=button.dataset.answer==='true';byte.behavior.feedback(correct);currentVoiceState=byte.behavior.state;if(document.querySelector('#voice').checked)void playRecording(currentVoiceState);document.querySelector('#quiz-feedback').textContent=correct?'Richtig: „went“ ist die Vergangenheitsform von „go“.':byte.behavior.mistakes===1?'Fast! „Yesterday“ verrät dir die Zeitform.':'Kein Stress: Die Vergangenheit von „go“ lautet „went“.';}));
  document.querySelectorAll('[data-look]').forEach(button=>button.addEventListener('click',()=>{gazeMode=button.dataset.look;document.querySelectorAll('[data-look]').forEach(b=>{b.classList.toggle('selected',b===button);b.setAttribute('aria-pressed',String(b===button));});if(gazeMode==='player')byte.behavior.lookAt(0,0);else if(gazeMode==='task')lookAtElement(document.querySelector('.quiz'));}));
  const worldTarget=new THREE.Vector3();const projected=new THREE.Vector3();
  function gazeToPoint(x,y){const rect=viewport.getBoundingClientRect();byte.head.getWorldPosition(worldTarget);projected.copy(worldTarget).project(camera);const hx=rect.left+(projected.x*.5+.5)*rect.width;const hy=rect.top+(-projected.y*.5+.5)*rect.height;byte.behavior.lookAt((x-hx)/240,(hy-y)/240);}
@@ -74,12 +79,13 @@ async function boot(){
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();running=false;showError('Die Grafikverbindung wurde unterbrochen. Bitte Seite neu laden.');});
  function frame(now){if(!running)return;const dt=Math.min((now-last)/1000,.08);last=now;if(!document.hidden){
   const speaking=!recording.paused&&!recording.ended;
+  if(speaking)byte.behavior.elapsed=Math.min(byte.behavior.elapsed,.8);
   let energy=0;if(speaking&&analyser){analyser.getFloatTimeDomainData(audioSamples);for(const sample of audioSamples)energy+=sample*sample;energy=Math.min(1,Math.sqrt(energy/audioSamples.length)*6);}
   voiceEnergy=THREE.MathUtils.lerp(voiceEnergy,energy,1-Math.exp(-dt*(energy>voiceEnergy?18:7)));
   byte.update(dt,{reducedMotion:motion.checked,speaking,speechTime:recording.currentTime,speechDuration:recording.duration,speechLevel:voiceEnergy});
   compactScale=THREE.MathUtils.lerp(compactScale,compact?.42:1,1-Math.exp(-dt*7));byte.root.scale.setScalar(compactScale);byte.root.position.y=(1-compactScale)*.32;
   shadow.scale.setScalar(compactScale);controls.update();if(gazeMode==='task')lookAtElement(document.querySelector('.quiz'));
-  const state=speaking?'speaking':byte.behavior.state;if(state!==lastState){lastState=state;const e=speaking?{line:'Sir Byte spricht …',label:'Am Erzählen.'}:EXPRESSIONS[state];document.querySelector('#speech').textContent=e.line;document.querySelector('#state-label').textContent=e.label;document.querySelectorAll('[data-state]').forEach(b=>{b.classList.toggle('active',b.dataset.state===state);b.setAttribute('aria-pressed',String(b.dataset.state===state));});}
+  const state=speaking?currentVoiceState:byte.behavior.state;const stateKey=state+speaking;if(stateKey!==lastState){lastState=stateKey;const e=EXPRESSIONS[state];document.querySelector('#speech').textContent=e.line;document.querySelector('#state-label').textContent=speaking?'Am Erzählen.':e.label;document.querySelectorAll('[data-state]').forEach(b=>{b.classList.toggle('active',b.dataset.state===state);b.setAttribute('aria-pressed',String(b.dataset.state===state));});}
   renderer.render(scene,camera);
  }requestAnimationFrame(frame);}
  document.addEventListener('visibilitychange',()=>{last=performance.now();});

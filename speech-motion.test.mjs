@@ -16,3 +16,7 @@ test('replay is repeatable and invalid media metadata yields a safe pose',()=>{
  assert.deepEqual(sampleSpeech(2,14,.3),sampleSpeech(2,14,.3));
  for(const value of Object.values(sampleSpeech(NaN,Infinity,NaN)))assert.ok(Number.isFinite(value));
 });
+test('short voice clips still reach full expression and settle at their own end',()=>{
+ assert.ok(sampleSpeech(.8,1.6,.4).weight>.99);
+ assert.equal(sampleSpeech(1.6,1.6,.4).weight,0);
+});

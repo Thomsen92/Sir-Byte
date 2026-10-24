@@ -3,7 +3,7 @@ export const EXPRESSIONS = {
   cheeky: { label:'Ein kleiner Hinweis …', line:'Nearly. Have another go!', duration:3.8, eyes:[0.65,0.04,0,0], tilt:-0.12, lift:0.02 },
   celebrate: { label:'Splendid!', line:'Splendid! Nicely done.', duration:3.6, eyes:[0,0,0.85,0.85], tilt:0.09, lift:0.16 },
   think: { label:'Einen Moment …', line:'Hmm. Let me think.', duration:4.5, eyes:[0.3,0.3,0,0], tilt:0.15, lift:-0.02 },
-  support: { label:'Wir schaffen das.', line:'Take your time. You have got this.', duration:5, eyes:[0.05,0.05,0.2,0.2], tilt:-0.09, lift:-0.04 },
+  support: { label:'Wir schaffen das.', line:"Take your time. You've got this.", duration:5, eyes:[0.05,0.05,0.2,0.2], tilt:-0.09, lift:-0.04 },
   surprise: { label:'Oh! Rather impressive.', line:'Oh! Rather impressive.', duration:2.8, eyes:[0,0,0,0], tilt:-0.04, lift:0.12 }
 };
 export class ByteBehavior {
